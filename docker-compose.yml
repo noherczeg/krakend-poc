@@ -1,0 +1,42 @@
+version: "3"
+
+services:
+  krakend_ce:
+    image: devopsfaith/krakend:1.1.1
+    volumes:
+      - ./krakend:/etc/krakend
+      - ./certs:/etc/krakend-certs
+    depends_on:
+      - service-a
+      - service-b
+      - service-c
+    networks:
+      - krakend-net
+    ports:
+      - "8443:8443"
+      - "8090:8090"
+
+  service-a:
+    container_name: service-a
+    build:
+      context: ./service-a
+    networks:
+      - krakend-net
+
+  service-b:
+    container_name: service-b
+    build:
+      context: ./service-b
+    networks:
+      - krakend-net
+
+  service-c:
+    container_name: service-c
+    build:
+      context: ./service-c
+    networks:
+      - krakend-net
+
+networks:
+  krakend-net:
+    driver: bridge

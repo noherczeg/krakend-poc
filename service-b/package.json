@@ -1,0 +1,17 @@
+{
+  "name": "service-b",
+  "version": "0.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "author": "Auth0",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.15.3"
+  }
+}
+
+
+

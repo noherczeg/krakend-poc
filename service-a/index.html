@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Hello</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+</head>
+<body>
+  <h1>Hello!</h1>
+
+  <h3>Some Object:</h3>
+  <pre id="some-object-data"></pre>
+
+  <h3>Another Object:</h3>
+  <pre id="another-object-data"></pre>
+
+  <h3>Fastest products:</h3>
+  <p>Provided by Service: <code id="products-fastest-service"></code></p>
+  <pre id="products-data"></pre>
+
+  <script type="text/javascript" async defer>
+    const someObjectData = document.querySelector('#some-object-data');
+    const anotherObjectData = document.querySelector('#another-object-data');
+    const fastestService = document.querySelector('#products-fastest-service');
+    const productsData = document.querySelector('#products-data');
+
+    fetch('some-object')
+      .then(r => r.json())
+      .then((data) => {
+        someObjectData.textContent = JSON.stringify(data, null, 4);
+      });
+
+    fetch('another-object')
+            .then(r => r.json())
+            .then((data) => {
+              anotherObjectData.textContent = JSON.stringify(data, null, 4);
+            });
+
+    fetch('fastest-products')
+            .then(r => r.json())
+            .then((data) => {
+              fastestService.textContent = data.service;
+              productsData.textContent = JSON.stringify(data.products, null, 4);
+            });
+  </script>
+</body>
+</html>

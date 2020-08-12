@@ -1,0 +1,111 @@
+{
+  "version": 2,
+  "timeout": "3000ms",
+  "name": "My nice Gateway",
+  "port": 8443,
+  "tls": {
+    "public_key": "/etc/krakend-certs/krakend-server.cert",
+    "private_key": "/etc/krakend-certs/krakend-server.key"
+  },
+  "extra_config": {
+    "github_com/devopsfaith/krakend-logstash": {
+      "enabled": true
+    },
+    "github_com/devopsfaith/krakend-gologging": {
+      "level":  "INFO",
+      "prefix": "[KRAKEND]",
+      "syslog": false,
+      "stdout": true
+    },
+    "github_com/devopsfaith/krakend-metrics": {
+      "collection_time": "60s",
+      "proxy_disabled": false,
+      "router_disabled": false,
+      "backend_disabled": false,
+      "endpoint_disabled": false,
+      "listen_address": ":8090"
+    }
+  },
+  "endpoints": [
+    {
+      "endpoint": "/",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/",
+          "host": [ "http://service-a:3003" ],
+          "encoding": "no-op"
+        }
+      ],
+      "extra_config": {
+        "github_com/devopsfaith/krakend-httpsecure": {
+          "frame_deny": true,
+          "content_type_nosniff": true,
+          "browser_xss_filter": true,
+          "content_security_policy": "default-src 'self';"
+        }
+      }
+    },
+    {
+      "endpoint": "/some-object",
+      "method": "GET",
+      "backend": [
+        {
+          "url_pattern": "/api/some-object",
+          "host": [ "http://service-b:3001" ]
+        }
+      ]
+    },
+    {
+      "endpoint": "/another-object",
+      "method": "GET",
+      "backend": [
+        {
+          "url_pattern": "/api/another-object",
+          "host": [ "http://service-c:3002" ]
+        }
+      ]
+    },
+    {
+      "endpoint": "/fastest-products",
+      "method": "GET",
+      "concurrent_calls": 3,
+      "backend": [
+        {
+          "url_pattern": "/api/products",
+          "host": [
+            "http://service-b:3001",
+            "http://service-c:3002"
+          ]
+        }
+      ],
+      "extra_config": {
+        "github.com/devopsfaith/krakend/proxy": {
+          "sequential": true
+        }
+      }
+    },
+    {
+      "endpoint": "/health",
+      "extra_config": {
+        "github.com/devopsfaith/krakend/proxy": {
+          "static": {
+            "data": {
+              "status": "OK"
+            },
+            "strategy": "always"
+          }
+        }
+      },
+      "backend": [
+        {
+          "url_pattern": "/",
+          "host": [
+            "http://fake-backend"
+          ]
+        }
+      ]
+    }
+  ]
+}
